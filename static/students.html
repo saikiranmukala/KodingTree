@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Students UI</title>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0d0d0d, #232323);
+      color: white;
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #00eaff;
+      text-shadow: 0 0 20px #00eaff;
+    }
+
+    .glass-form {
+      width: 400px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #00aaff, #0044ff);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #0099ff;
+    }
+
+    .card {
+      padding: 18px;
+      margin: 12px auto;
+      width: 90%;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #444, #222);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    .actions button {
+      margin-right: 10px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Student Management</h1>
+
+<div class="glass-form">
+  <input id="student_id" placeholder="Student ID" />
+  <input id="name" placeholder="Name" />
+  <input id="course" placeholder="Course" />
+  <input id="mobile" placeholder="Mobile" />
+
+  <button onclick="addStudent()">Add Student</button>
+</div>
+
+<h2 style="text-align:center;margin-top:40px;">Students List</h2>
+
+<div id="list"></div>
+
+<script>
+  const api = '/students';
+
+  async function loadStudents() {
+    const res = await fetch(api);
+    const data = await res.json();
+    const list = document.getElementById('list');
+    list.innerHTML = "";
+
+    data.forEach(st => {
+      list.innerHTML += `
+        <div class="card">
+          <b>${st.student_id}</b> — ${st.name}<br>
+          Course: ${st.course}<br>
+          Mobile: ${st.mobile}
+          <div class="actions">
+            <button onclick="editStudent('${st.student_id}')">Edit</button>
+            <button onclick="deleteStudent('${st.student_id}')">Delete</button>
+          </div>
+        </div>`;
+    });
+  }
+
+  async function addStudent() {
+    const student_id = document.getElementById("student_id").value;
+    const name = document.getElementById("name").value;
+    const course = document.getElementById("course").value;
+    const mobile = document.getElementById("mobile").value;
+
+    await fetch(api, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id, name, course, mobile })
+    });
+
+    loadStudents();
+  }
+
+  async function editStudent(id) {
+    const newName = prompt("New Name:");
+    const newCourse = prompt("New Course:");
+    const newMobile = prompt("New Mobile:");
+
+    await fetch(`${api}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newName, course: newCourse, mobile: newMobile })
+    });
+
+    loadStudents();
+  }
+
+  async function deleteStudent(id) {
+    await fetch(`${api}/${id}`, { method: "DELETE" });
+    loadStudents();
+  }
+
+  loadStudents();
+</script>
+
+</body>
+</html>
