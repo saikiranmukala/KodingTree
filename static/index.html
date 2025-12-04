@@ -2,99 +2,82 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Employees UI</title>
+  <title>Koding Tree</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input, button { padding: 6px; margin: 4px; }
-    li { margin: 6px 0; }
-  </style>
-</head>
-<body>
-  <h1>KODING TREE</h1>
-  <h2>Employees</h2>
-
-  <form id="addForm">
-    <input id="emp_id" placeholder="Employee ID" required />
-    <input id="name" placeholder="Name" required />
-    <input id="job_role" placeholder="Job Role" required />
-    <button type="submit">Add Employee</button>
-  </form>
-
-  <h3>List</h3>
-  <ul id="list"></ul>
-
-  <script>
-    const api = '/employees';
-
-    async function fetchEmployees() {
-      const res = await fetch(api);
-      const data = await res.json();
-      const list = document.getElementById('list');
-      list.innerHTML = '';
-
-      data.forEach(emp => {
-        const li = document.createElement('li');
-
-        li.textContent = `${emp.emp_id} — ${emp.name} (${emp.job_role}) `;
-
-        // Edit Button
-        const edit = document.createElement('button');
-        edit.textContent = 'Edit';
-        edit.onclick = async () => {
-          const newName = prompt('New name', emp.name);
-          const newJob = prompt('New job role', emp.job_role);
-
-          if (newName !== null && newJob !== null) {
-            await fetch(`${api}/${emp.emp_id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name: newName, job_role: newJob })
-            });
-            fetchEmployees();
-          }
-        };
-
-        // Delete Button
-        const del = document.createElement('button');
-        del.textContent = 'Delete';
-        del.onclick = async () => {
-          await fetch(`${api}/${emp.emp_id}`, { method: 'DELETE' });
-          fetchEmployees();
-        };
-
-        li.appendChild(edit);
-        li.appendChild(del);
-        list.appendChild(li);
-      });
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1f1f1f, #3e3e3e);
     }
 
-    // POST Employee
-    document.getElementById('addForm').addEventListener('submit', async (ev) => {
-      ev.preventDefault();
+    .glass-box {
+      width: 70%;
+      max-width: 600px;
+      padding: 40px;
+      text-align: center;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 0 25px rgba(0,0,0,0.4);
+      animation: fadeIn 1.2s ease-out;
+    }
 
-      const emp_id = document.getElementById('emp_id').value.trim();
-      const name = document.getElementById('name').value.trim();
-      const job_role = document.getElementById('job_role').value.trim();
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-      if (!emp_id || !name || !job_role) {
-        return alert("All fields are required.");
-      }
+    h1 {
+      font-size: 48px;
+      color: white;
+      font-weight: bold;
+      margin-bottom: 20px;
+      animation: glow 2.5s infinite alternate;
+    }
 
-      await fetch(api, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emp_id, name, job_role })
-      });
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00eaff; }
+      to   { text-shadow: 0 0 25px #00eaff; }
+    }
 
-      document.getElementById('emp_id').value = '';
-      document.getElementById('name').value = '';
-      document.getElementById('job_role').value = '';
+    .btn {
+      display: block;
+      width: 80%;
+      margin: 15px auto;
+      padding: 15px;
+      background: linear-gradient(135deg, #00b7ff, #0066ff);
+      color: white;
+      font-size: 20px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-      fetchEmployees();
-    });
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #00aaff;
+    }
+  </style>
+</head>
 
-    // initial load
-    fetchEmployees();
-  </script>
+<body>
+  <div class="glass-box">
+    <h1>KODING TREE</h1>
+
+    <button class="btn" onclick="window.location.href='employees.html'">
+      Employees
+    </button>
+
+    <button class="btn" onclick="window.location.href='students.html'">
+      Students
+    </button>
+  </div>
 </body>
 </html>
+
