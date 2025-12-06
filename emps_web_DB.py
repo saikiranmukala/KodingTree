@@ -83,6 +83,15 @@ def get_employees():
     all_emp = Employee.query.all()
     return jsonify([e.json() for e in all_emp])
 
+# GET SINGLE EMPLOYEE
+@app.route('/employees/<string:emp_id>', methods=['GET'])
+def get_employee(emp_id):
+    emp = Employee.query.filter_by(emp_id=emp_id).first()
+    if not emp:
+        abort(404)
+    return emp.json()
+
+
 @app.route('/employees/<string:emp_id>', methods=['PUT'])
 def update_employee(emp_id):
     emp = Employee.query.filter_by(emp_id=emp_id).first()
@@ -128,6 +137,14 @@ def create_student():
 def get_students():
     all_std = Student.query.all()
     return jsonify([s.json() for s in all_std])
+
+# GET SINGLE STUDENT
+@app.route('/students/<string:student_id>', methods=['GET'])
+def get_student(student_id):
+    std = Student.query.filter_by(student_id=student_id).first()
+    if not std:
+        abort(404)
+    return std.json()
 
 
 @app.route('/students/<string:student_id>', methods=['PUT'])
